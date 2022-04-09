@@ -3,6 +3,7 @@ package kit.trafficscotland;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -27,8 +29,12 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -39,14 +45,20 @@ public class MainActivity extends AppCompatActivity implements
     private Traffic traffic;
     private TrafficParser trafficParser = new TrafficParser();
     private ArrayList<Traffic> searchList = new ArrayList<>();
+    private DatePickerDialog datePickerDialog;
+
 
 
 
 
     ExecutorService executorService = Executors.newSingleThreadExecutor();
     Handler handler = new Handler(Looper.getMainLooper());
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    String dateinString;
     ListView simpleList;
     EditText editText;
+    EditText editTextDate;
+    Date date;
     private Button searchButton;
     private Button showMore;
     private TextView rawDataDisplay;
@@ -60,16 +72,50 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
 
 
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         simpleList = findViewById(R.id.simpleListView);
         editText = findViewById(R.id.editTextSimple);
+        editTextDate = findViewById(R.id.editTextDate);
         // Set up the raw links to the graphical components
         rawDataDisplay = (TextView) findViewById(R.id.rawDataDisplay);
         getTrafficList();
+
         searchButton = findViewById(R.id.searchButton);
+        editTextDate.setOnClickListener(view -> {
+            searchList.clear();
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            datePickerDialog = new DatePickerDialog(this,
+                    new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+                            editTextDate.setText(i2 + "/" + (i1 + 1) + "/" + i);
+                        }
+                    }, year, month, day);
+
+            datePickerDialog.show();
+        });
+
+
+
+
+
         searchButton.setOnClickListener(view -> {
             searchList.clear();
+            try {
+                dateinString = editTextDate.getText().toString();
+                date = simpleDateFormat.parse(dateinString);
+            }catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+
+
 
             if(editText.getText().length() == 0) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -84,29 +130,20 @@ public class MainActivity extends AppCompatActivity implements
 
                 for (Traffic traffic: trafficList) {
                     if(traffic.getTitle().toLowerCase().contains(searchValue)) {
-                        searchList.add(traffic);
+                        if(traffic.getStartDate().after(date) && traffic.getEndDate().before(date)) {
+                            searchList.add(traffic);
+                        }
                     }
                 }
                 ListAdapter searchButton = new ListAdapter(this, searchList);
                 simpleList.setAdapter(searchButton);
             }
-
-
         });
-
-
-
     }
-
-
-
 
     public void getTrafficList(){
         executorService.execute(()->{
             //background stuff goes here
-
-
-
             URL aurl;
             URLConnection yc;
             try{
@@ -118,8 +155,6 @@ public class MainActivity extends AppCompatActivity implements
                 e.printStackTrace();
 
             }
-
-
             handler.post(()->{
                 //UI stuff here
 //                Log.i("trafficList",  trafficList.toString());

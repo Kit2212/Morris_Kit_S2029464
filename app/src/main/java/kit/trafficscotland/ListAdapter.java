@@ -15,12 +15,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ListAdapter extends ArrayAdapter<Traffic> {
     private Context context;
     private List<Traffic> allTraffic;
+    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
     ListAdapter (@NonNull Context c, @NonNull ArrayList<Traffic> allTraffic) {
         super(c, R.layout.activity_listview, allTraffic);
@@ -43,7 +45,10 @@ public class ListAdapter extends ArrayAdapter<Traffic> {
 
         currentTitle.setText(allTraffic.get(position).getTitle());
 //        Log.i("TitlePosition", allTraffic.get(position).getTitle());
-        date.setText(allTraffic.get(position).getStartDate() + " - " + allTraffic.get(position).getEndDate());
+        String startDate = formatter.format(allTraffic.get(position).getStartDate());
+        String endDate = formatter.format(allTraffic.get(position).getEndDate());
+        date.setText("Dates: " + startDate + " - " + endDate);
+
 
 
 

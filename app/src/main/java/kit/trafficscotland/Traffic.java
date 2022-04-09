@@ -1,13 +1,15 @@
 package kit.trafficscotland;
 
+import java.util.Date;
+
 public class Traffic {
     private String title;
     private String description;
     private String link;
     private String point;
     private String pubDate;
-    private String startDate;
-    private String endDate;
+    private Date startDate;
+    private Date endDate;
 
 
     //Getter
@@ -31,9 +33,9 @@ public class Traffic {
         return pubDate;
     }
 
-    public String getStartDate() { return startDate; }
+    public Date getStartDate() { return startDate; }
 
-    public String getEndDate() { return endDate; }
+    public Date getEndDate() { return endDate; }
 
     //Setter
     public void setTitle(String title) {
@@ -54,9 +56,9 @@ public class Traffic {
 
     public void setPubDate(String pubDate) { this.pubDate = pubDate; }
 
-    public void setStartDate(String startDate) { this.startDate = startDate; }
+    public void setStartDate(Date startDate) { this.startDate = startDate; }
 
-    public void setEndDate(String endDate) { this.endDate = endDate; }
+    public void setEndDate(Date endDate) { this.endDate = endDate; }
 
     //Empty Constructor
     public Traffic() {
@@ -64,7 +66,7 @@ public class Traffic {
     }
 
     //Constructor
-    public Traffic(String title, String description, String link, String point, String pubDate, String startDate, String endDate) {
+    public Traffic(String title, String description, String link, String point, String pubDate, Date startDate, Date endDate) {
         this.title = title;
         this.description = description;
         this.link = link;
@@ -72,18 +74,5 @@ public class Traffic {
         this.pubDate = pubDate;
         this.startDate = startDate;
         this.endDate = endDate;
-    }
-
-    @Override
-    public String toString() {
-        return "Traffic{" +
-                "title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", link='" + link + '\'' +
-                ", point='" + point + '\'' +
-                ", pubDate='" + pubDate + '\'' +
-                ", startDate='" + startDate + '\'' +
-                ", endDate='" + endDate + '\'' +
-                '}';
     }
 }

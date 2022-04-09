@@ -6,11 +6,16 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class TrafficParser {
     private Traffic traffic;
     private ArrayList<Traffic> listOfTraffic = new ArrayList<>();
+    SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy");
+    SimpleDateFormat formatter2 = new SimpleDateFormat("dd/MM/yyyy");
+
 
     public ArrayList<Traffic> trafficList(InputStream inputStream) {
         try {
@@ -41,19 +46,25 @@ public class TrafficParser {
                             traffic.setDescription(description);
                             int firstComma = description.indexOf(",") + 2;
                             int firstDash = description.indexOf("-");
-                            String startDate = description.substring(firstComma, firstDash).trim();
+                            String startDateString = description.substring(firstComma, firstDash).trim();
+                            Date startDate = formatter.parse(startDateString);
+                            startDateString = formatter2.format(startDate);
+                            startDate = formatter2.parse(startDateString);
                             traffic.setStartDate(startDate);
 
                             //Second description date
                             String secondDesc = description.substring(firstDash + 1);
                             int lastComma = secondDesc.indexOf(",") +2;
                             int lastDash = secondDesc.indexOf("-");
-                            String endDate = secondDesc.substring(lastComma, lastDash).trim();
+                            String endDateString = secondDesc.substring(lastComma, lastDash).trim();
+                            Date endDate = formatter.parse(endDateString);
+                            endDateString = formatter2.format(endDate);
+                            endDate = formatter2.parse(endDateString);
                             traffic.setEndDate(endDate);
 
 
 
-                            Log.i("endDate", startDate + "," + endDate);
+//                            Log.i("endDate", startDate + "," + endDate);
                         }
                     } else if (xpp.getName().equalsIgnoreCase("link")) {
                         if(insideItem) {
