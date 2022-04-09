@@ -1,0 +1,2 @@
+rootProject.name = "Morris_Kit_S2029464"
+include ':app'
