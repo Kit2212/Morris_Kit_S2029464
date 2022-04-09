@@ -1,6 +1,3 @@
-<!-- MPD XML Starter code Semester B Session 2020 2021 -->
-
-
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -16,6 +13,20 @@
             android:divider="@color/black"
             android:dividerHeight="5dp"
             />
+
+        <EditText
+            android:id="@+id/editTextSimple"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+        <Button
+            android:id="@+id/searchButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Search" />
+
         <View
             android:layout_width="match_parent"
             android:layout_height="4dp"
@@ -28,6 +39,9 @@
             android:divider="#42000000"
             android:dividerHeight="2dp"
             />
+
+
+
 
 
     </LinearLayout>

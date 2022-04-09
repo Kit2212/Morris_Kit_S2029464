@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -42,6 +44,13 @@ public class ListAdapter extends ArrayAdapter<Traffic> {
         currentTitle.setText(allTraffic.get(position).getTitle());
 //        Log.i("TitlePosition", allTraffic.get(position).getTitle());
         date.setText(allTraffic.get(position).getStartDate() + " - " + allTraffic.get(position).getEndDate());
+
+
+
+
+
+
+
 
 
 

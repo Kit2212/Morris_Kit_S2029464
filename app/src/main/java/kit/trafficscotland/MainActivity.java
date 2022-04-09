@@ -2,6 +2,7 @@ package kit.trafficscotland;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,7 +12,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -35,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements
     private ArrayList<Traffic> trafficList = new ArrayList<>();
     private Traffic traffic;
     private TrafficParser trafficParser = new TrafficParser();
+    private ArrayList<Traffic> searchList = new ArrayList<>();
 
 
 
@@ -42,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements
     ExecutorService executorService = Executors.newSingleThreadExecutor();
     Handler handler = new Handler(Looper.getMainLooper());
     ListView simpleList;
+    EditText editText;
+    private Button searchButton;
     private Button showMore;
     private TextView rawDataDisplay;
     private Button startButton;
@@ -57,14 +63,48 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         simpleList = findViewById(R.id.simpleListView);
+        editText = findViewById(R.id.editTextSimple);
         // Set up the raw links to the graphical components
         rawDataDisplay = (TextView) findViewById(R.id.rawDataDisplay);
         getTrafficList();
+        searchButton = findViewById(R.id.searchButton);
+        searchButton.setOnClickListener(view -> {
+            searchList.clear();
+
+            if(editText.getText().length() == 0) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("Please enter a search term");
+                builder.setCancelable(true);
+                AlertDialog alert = builder.create();
+                alert.show();
+
+            } else {
+                String searchValue = editText.getText().toString();
+                searchValue.toLowerCase();
+
+                for (Traffic traffic: trafficList) {
+                    if(traffic.getTitle().toLowerCase().contains(searchValue)) {
+                        searchList.add(traffic);
+                    }
+                }
+                ListAdapter searchButton = new ListAdapter(this, searchList);
+                simpleList.setAdapter(searchButton);
+            }
+
+
+        });
+
+
+
     }
+
+
+
 
     public void getTrafficList(){
         executorService.execute(()->{
             //background stuff goes here
+
 
 
             URL aurl;
@@ -86,13 +126,6 @@ public class MainActivity extends AppCompatActivity implements
                 ListAdapter listAdapter = new ListAdapter(this, trafficList);
 //                Log.i("ListAdapterToString", listAdapter.toString());
                 simpleList.setAdapter(listAdapter);
-
-
-
-
-
-
-
 
             });
         });
