@@ -1,3 +1,6 @@
+//Kit Morris
+//S2029464
+
 package kit.trafficscotland;
 
 import android.util.Log;
@@ -27,9 +30,7 @@ public class TrafficParser {
             boolean insideItem = false;
 
             while (eventType != XmlPullParser.END_DOCUMENT) {
-//                Log.i("Inside End Document", "Also End document");
                 if (eventType == XmlPullParser.START_TAG) {
-//                    Log.i("Inside Start Tag", "Also inside Start Tag");
                     if (xpp.getName().equalsIgnoreCase("item")) {
                         traffic = new Traffic();
                         insideItem = true;
@@ -37,7 +38,6 @@ public class TrafficParser {
                     } else if (xpp.getName().equalsIgnoreCase("title")) {
                         if (insideItem) {
                             traffic.setTitle(xpp.nextText());
-//                            Log.i("Inside Title", "Also inside Title");
                         }
                     } else if (xpp.getName().equalsIgnoreCase("description")){
                         if (insideItem) {
@@ -46,25 +46,27 @@ public class TrafficParser {
                             traffic.setDescription(description);
                             int firstComma = description.indexOf(",") + 2;
                             int firstDash = description.indexOf("-");
-                            String startDateString = description.substring(firstComma, firstDash).trim();
-                            Date startDate = formatter.parse(startDateString);
-                            startDateString = formatter2.format(startDate);
-                            startDate = formatter2.parse(startDateString);
-                            traffic.setStartDate(startDate);
+                            if (description.startsWith("Start")) {
+                                String startDateString = description.substring(firstComma, firstDash).trim();
+                                //String to date to string to date
+                                Date startDate = formatter.parse(startDateString);
+                                startDateString = formatter2.format(startDate);
+                                startDate = formatter2.parse(startDateString);
+                                traffic.setStartDate(startDate);
 
-                            //Second description date
-                            String secondDesc = description.substring(firstDash + 1);
-                            int lastComma = secondDesc.indexOf(",") +2;
-                            int lastDash = secondDesc.indexOf("-");
-                            String endDateString = secondDesc.substring(lastComma, lastDash).trim();
-                            Date endDate = formatter.parse(endDateString);
-                            endDateString = formatter2.format(endDate);
-                            endDate = formatter2.parse(endDateString);
-                            traffic.setEndDate(endDate);
-
-
-
-//                            Log.i("endDate", startDate + "," + endDate);
+                                //Second description date
+                                String secondDesc = description.substring(firstDash + 1);
+                                int lastComma = secondDesc.indexOf(",") +2;
+                                int lastDash = secondDesc.indexOf("-");
+                                String endDateString = secondDesc.substring(lastComma, lastDash).trim();
+                                Date endDate = formatter.parse(endDateString);
+                                endDateString = formatter2.format(endDate);
+                                endDate = formatter2.parse(endDateString);
+                                traffic.setEndDate(endDate);
+                            } else {
+                                traffic.setStartDate(new Date());
+                                traffic.setEndDate(new Date());
+                            }
                         }
                     } else if (xpp.getName().equalsIgnoreCase("link")) {
                         if(insideItem) {

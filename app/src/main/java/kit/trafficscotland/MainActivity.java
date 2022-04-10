@@ -1,3 +1,6 @@
+//Kit Morris
+//S2029464
+
 package kit.trafficscotland;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,6 +41,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements
         OnClickListener {
@@ -46,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements
     private TrafficParser trafficParser = new TrafficParser();
     private ArrayList<Traffic> searchList = new ArrayList<>();
     private DatePickerDialog datePickerDialog;
+    private ArrayList<Traffic> tempList = new ArrayList<>();
 
 
 
@@ -67,6 +72,10 @@ public class MainActivity extends AppCompatActivity implements
     private String url1 = "";
     private String
             urlSource = "https://trafficscotland.org/rss/feeds/roadworks.aspx";
+    private String
+            urlSource2 = "https://trafficscotland.org/rss/feeds/plannedroadworks.aspx";
+    private String
+            urlSource3 = "https://trafficscotland.org/rss/feeds/currentincidents.aspx";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements
             try {
                 dateinString = editTextDate.getText().toString();
                 date = simpleDateFormat.parse(dateinString);
+                Log.i("dateinstring", dateinString);
             }catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -123,14 +133,20 @@ public class MainActivity extends AppCompatActivity implements
                 builder.setCancelable(true);
                 AlertDialog alert = builder.create();
                 alert.show();
-
             } else {
                 String searchValue = editText.getText().toString();
-                searchValue.toLowerCase();
+
+
 
                 for (Traffic traffic: trafficList) {
-                    if(traffic.getTitle().toLowerCase().contains(searchValue)) {
-                        if(traffic.getStartDate().after(date) && traffic.getEndDate().before(date)) {
+                    boolean midDate = false;
+                    if(traffic.getStartDate().before(date) && traffic.getEndDate().after(date)) {
+                        midDate = true;
+                    }
+                    Log.i("traffic get start date", date.toString());
+                    if(traffic.getTitle().toLowerCase().contains(searchValue.toLowerCase())) {
+                        Log.i("inside first if", searchValue);
+                        if(traffic.getStartDate().compareTo(date) == 0 || traffic.getEndDate().compareTo(date) ==0 || midDate == true) {
                             searchList.add(traffic);
                         }
                     }
@@ -141,6 +157,11 @@ public class MainActivity extends AppCompatActivity implements
         });
     }
 
+
+
+
+
+
     public void getTrafficList(){
         executorService.execute(()->{
             //background stuff goes here
@@ -150,16 +171,42 @@ public class MainActivity extends AppCompatActivity implements
                 aurl = new URL(urlSource);
                 yc = aurl.openConnection();
                 trafficList = trafficParser.trafficList(yc.getInputStream());
-//                Log.i("Try", trafficList.toString());
+                for (Traffic traffic: trafficList) {
+                    traffic.setType(Type.ROADWORKS);
+                }
             }catch(IOException e){
                 e.printStackTrace();
+            }
+            try{
+                aurl = new URL(urlSource2);
+                yc = aurl.openConnection();
+                tempList.addAll(trafficParser.trafficList(yc.getInputStream()));
+                for(Traffic traffic: tempList) {
+                    traffic.setType(Type.PLANNEDROADWORKS);
+                }
+                trafficList.addAll(tempList);
+                tempList.clear();
 
+
+//                trafficList = trafficParser.trafficList(yc.getInputStream());
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+            try{
+                aurl = new URL(urlSource3);
+                yc = aurl.openConnection();
+                tempList.addAll(trafficParser.trafficList(yc.getInputStream()));
+                for(Traffic traffic: tempList) {
+                    traffic.setType(Type.CURRENTINCIDENTS);
+                }
+                trafficList.addAll(tempList);
+//                trafficList = trafficParser.trafficList(yc.getInputStream());
+            }catch(IOException e){
+                e.printStackTrace();
             }
             handler.post(()->{
                 //UI stuff here
-//                Log.i("trafficList",  trafficList.toString());
                 ListAdapter listAdapter = new ListAdapter(this, trafficList);
-//                Log.i("ListAdapterToString", listAdapter.toString());
                 simpleList.setAdapter(listAdapter);
 
             });
