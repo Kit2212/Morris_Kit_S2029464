@@ -52,10 +52,6 @@ public class MainActivity extends AppCompatActivity implements
     private DatePickerDialog datePickerDialog;
     private ArrayList<Traffic> tempList = new ArrayList<>();
 
-
-
-
-
     ExecutorService executorService = Executors.newSingleThreadExecutor();
     Handler handler = new Handler(Looper.getMainLooper());
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -79,9 +75,6 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         simpleList = findViewById(R.id.simpleListView);
@@ -110,10 +103,6 @@ public class MainActivity extends AppCompatActivity implements
             datePickerDialog.show();
         });
 
-
-
-
-
         searchButton.setOnClickListener(view -> {
             searchList.clear();
             try {
@@ -123,9 +112,6 @@ public class MainActivity extends AppCompatActivity implements
             }catch (ParseException e) {
                 e.printStackTrace();
             }
-
-
-
 
             if(editText.getText().length() == 0) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -156,11 +142,6 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
     }
-
-
-
-
-
 
     public void getTrafficList(){
         executorService.execute(()->{
